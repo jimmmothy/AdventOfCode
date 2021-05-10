@@ -48,13 +48,6 @@ string aoc_input::str(void)
 /*********************************************************/
 /*********************************************************/
 
-typedef struct polar_s
-{
-	int pos_one;
-	int pos_two;
-	bool found;
-} polar_s;
-
 class day
 {
 	string data;
@@ -62,7 +55,6 @@ public:
 	day();
 	int part1();
 	int part2();
-	polar_s find_polarity(string);
 	string reduce_polymer(string);
 	vector<string> gen_v_input(string);
 	char polar_c(char);
@@ -88,57 +80,48 @@ char day::polar_c(char r_input)
 	return tmp;
 }
 
-/* find the next polarity instance (or not) and return polar_s */
-polar_s day::find_polarity(string r_input)
-{
-	char current;
-	char next;
-	int position = 0;
 
-	polar_s tmp;
-	tmp.found = false;
-	tmp.pos_one = 0;
-	tmp.pos_two = 0;
-
-	string::iterator it;
-	for (it = r_input.begin(); it < r_input.end()-1; it++)
-	{
-		current = *it;
-		next = day::polar_c(current);
-
-		if (*(it + 1) == next)
-		{
-			tmp.found = true;
-			tmp.pos_one = position;
-			tmp.pos_two = position + 1;
-			break;
-		}
-		position++;
-	}
-	return tmp;
-}
-
-/* this function is horrificly inefficient,
-	need a better way of doing it */
+/* Fixed this up to be a lot more efficient, without calling string::erase a billion times */
 string day::reduce_polymer(string r_input)
 {
-	bool polarity_found = true;
-	polar_s tmp;
-	string answer = r_input;
+	string s_input = r_input;
+	string s_answer;
 
-	while (polarity_found == true)
+	char current;
+	char next;
+	bool lopf;
+	bool found_one = true;
+
+	string::iterator it;
+	while (found_one == true)
 	{
-		tmp = day::find_polarity(answer);
-		if (tmp.found == true)
+		found_one = false;
+		s_answer = "";
+
+		for (it = s_input.begin(); it < s_input.end()-1; it++)
 		{
-			answer = answer.erase(tmp.pos_one, 2);
-			//answer = answer.erase(tmp.pos_one, 1);
-		} else {
-			polarity_found = false;
+			current = *it;
+			next = day::polar_c(current);
+
+			if (*(it + 1) != next)
+			{
+				s_answer += *it;
+				lopf = false;
+			} else {
+				it++;
+				lopf = true;
+				found_one = true;
+			}
 		}
+
+		if (lopf == false)
+		{
+			s_answer += s_input.at(s_input.length()-1);
+		}
+		s_input = s_answer;
 	}
 
-	return answer;
+	return s_answer;
 }
 
 vector<string> day::gen_v_input(string r_input)
@@ -170,8 +153,6 @@ int day::part2()
 {	vector<string> v_input;
 	v_input = day::gen_v_input(day::data);
 
-	cout<<"v_input generated"<<endl;
-
 	int tmp_answer = 999999;
 	int counter = 0;
 	for (const auto &i: v_input)
@@ -179,9 +160,6 @@ int day::part2()
 		string tmp_s = day::reduce_polymer(i);
 		if (tmp_s.size() < tmp_answer)
 			tmp_answer = tmp_s.size();
-
-		cout<<counter<<" completed"<<endl;
-		counter++;
 	}
 
 	return tmp_answer;
