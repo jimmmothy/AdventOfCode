@@ -1,19 +1,8 @@
 #include <iostream>
-#include <vector>
-#include <string>
 #include <cmath>
 #include <utility>
 
 using namespace std;
-/*
-x,y
-rack_id = x + 10
-power_level of rach_id = rack_id * y
-increase power_level by grid serial (input)
-power_level = power_level * rack_id
-keep only hundred digit of power level .. 12345 becomes 3
-subtract 5 from power level
-*/
 
 int calculate_pl(int x, int y, int grid_serial)
 {
@@ -99,8 +88,8 @@ p2answer part2(int grid_serial)
 
 int main()
 {
-	//pair<int, int> answer = part1(7315);
-	//cout<<answer.first<<","<<answer.second<<endl;
+	pair<int, int> answer = part1(7315);
+	cout<<answer.first<<","<<answer.second<<endl;
 
 	cout<<"calculating part2.. this will take a while... l2multithread?"<<endl;
 	p2answer answer = part2(7315);
