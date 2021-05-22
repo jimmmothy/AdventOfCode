@@ -77,14 +77,14 @@ int find_recipes(string input)
 		elf_two += 1 + scoreboard.at(elf_two);
 
 		// save time by only searching in larger chunks
-		if (limit - index >= (input_length * 1000))
+		if (limit - index >= (input_length * 1000000))
 		{
 			//cout<<"limit:"<<limit<<" index:"<<index<<endl;
 			resp = sequence_found(scoreboard, input, index);
 			if (resp > 0)
 				break;
 			else
-				index = limit;
+				index = limit-5;
 		}
 	}
 
