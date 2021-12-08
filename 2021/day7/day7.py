@@ -1,6 +1,5 @@
 #/usr/bin/python3
 
-from functools import total_ordering
 import sys
 
 class crab:
@@ -25,7 +24,6 @@ class crab:
                     
                     dz = abs(x - zone)
                     fuel += dz
-                    #print(f"dz:{dz} fuel:{fuel}")
 
         else:
             for x in self.total_crabbies:
@@ -33,7 +31,6 @@ class crab:
                     
                     dz = self.checkFuel(abs(x - zone))
                     fuel += dz
-                    #print(f"dz:{dz} fuel:{fuel}")
 
         return fuel
 
@@ -43,7 +40,6 @@ class crab:
         for x in range(0, number + 1):
             count += x
         return count
-        #print(count)
 
     def checkAllZones(self, partTwo):
 
@@ -52,13 +48,11 @@ class crab:
         
         for x in range(self.lowest, self.highest + 1):
             currentf = self.checkZone(x, partTwo)
-            #print(f"currentf:{currentf} from zone:{x}")
 
             if currentf < lowestnumber:
                 
                 lowestzone = x
                 lowestnumber = currentf
-                #print(f"{lowestzone} {x} {lowestnumber}")
         
         print(f"{lowestnumber}")
 
@@ -73,9 +67,6 @@ def main():
     crabs = crab(rawinput)
     crabs.checkAllZones(False)
     
-    #q = crabs.checkZone(2)
-    #print(q)
-
     # Part two
     crabs.checkAllZones(True)
 
