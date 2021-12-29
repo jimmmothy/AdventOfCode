@@ -8,78 +8,97 @@ class polymer:
 		self.template = input.split("\n\n")[0]
 		self.moves = [x for x in ((input.rstrip()).split("\n\n")[1]).split("\n")]
 		self.length = len(self.template)
-		self.letters = []
-	
-	def checkinsert(self, input) -> str:
+		self.letters = {}
 
+		self.combos = {}
 		for q in self.moves:
-			template = q.split(" -> ")[0]
-			insertion = q.split(" -> ")[1]
+			initial = q.split(" -> ")[0]
+			if initial not in self.combos:
+				self.combos[initial] = 0
+			else:
+				self.combos[initial] = 0
+		self.buildcombos(self.template)
 
-			if template == input:
-				return insertion
-		return ""
+		self.lettercount = {}
+		for q in self.template:
+			if q not in self.lettercount:
+				self.lettercount[q] = 1
+			else:
+				self.lettercount[q] += 1
+
+	def buildcombos(self, input) -> None:
+
+		length = len(input)
+		for q in range(0, length-1):
+			buff = input[q] + input[q + 1]
+			if buff not in self.combos:
+				self.combos[buff] = 1
+			else:
+				self.combos[buff] += 1
+
+	def insertcombo(self, initial, insert, combos, ammount) -> None:
+
+		self.length += ammount
+
+		offshoot1 = initial[0] + insert
+		offshoot2 = insert + initial[1]
+
+		if offshoot1 not in combos:
+			combos[offshoot1] = ammount
+		else:
+			combos[offshoot1] += ammount
+
+		if offshoot2 not in combos:
+			combos[offshoot2] = ammount
+		else:
+			combos[offshoot2] += ammount
+
+
+		if insert not in self.lettercount:
+			self.lettercount[insert] = ammount
+		else:
+			self.lettercount[insert] += ammount
+				
+		return combos
+		
 	
 	def nextmove(self) -> bool:
-
-		inserted = False
-		buff = self.template
-		temp = ""
-
-		for q in range(0, len(self.template)-1):
-			target = self.template[+q:q+2]
-			insert = self.checkinsert(target)
-
-			if insert != "":
-				if q != 0:
-					fullinsert = insert + target[1]
-				else:
-					fullinsert = target[0] + insert + target[1]
-				temp += fullinsert
-				inserted = True
 		
-		self.template = temp
-		return inserted
+		tmpcombos = self.combos.copy()
+		for q in self.moves:
+			initial = q.split(" -> ")[0]
+			insert = q.split(" -> ")[1]
 
-	def letterfound(self, input) -> bool:
+			if self.combos[initial] >= 1:
+				ammount = self.combos[initial]
 
-		for q in self.letters:
-			if q != [] and q[0] == input:
-				return True
-		return False
+				tmpcombos[initial] -= ammount
+				tmpcombos = self.insertcombo(initial, insert, tmpcombos, ammount)
+		
+		self.combos = tmpcombos.copy()
+		return True
 	
-	def addtoletter(self, letter, ammount) -> None:
+	def countallletters(self) -> None:
 
-		for q in range(0, len(self.letters)):
-			if self.letters[q] != [] and self.letters[q][0] == letter:
-				extra = self.letters[q][1]
-				self.letters[q] = tuple((letter, extra+ammount))
+		mostcommon = 0
+		leastcommon = 0
+		first = True
 
-	def countletters(self) -> int:
+		for q in self.lettercount:
 
-		self.letters = []
-		self.length = len(self.template)
-		for q in self.template:
-			if self.letterfound(q) == True:
-				self.addtoletter(q, 1)
+			value = self.lettercount[q]
+			if first == True:
+				first = False
+				leastcommon = value
+				mostcommon = value
+
 			else:
-				self.letters.append(tuple((q, 1)))
-				a = tuple((q, 1))
+				if value < leastcommon:
+					leastcommon = value
+				elif value > mostcommon:
+					mostcommon = value
 
-		
-		if self.letters != []:
-			totalcount = 0
-			highest, lowest = 0, self.letters[0][1]
-			for q in self.letters:
-				totalcount += 1
-				if q[1] < lowest:
-					lowest = q[1]
-				elif q[1] > highest:
-					highest = q[1]
-			return (highest - lowest)
-		
-		return 0
-
+		print(f"{mostcommon - leastcommon}")
 
 
 def main():
@@ -88,23 +107,20 @@ def main():
 	input = open(str(sys.argv[1]), "r").read()
 	plastic = polymer(input)
 
-	print(f"{plastic.template}\n{plastic.moves}")
-
 	step = 0
 	limit = 10
-	while (plastic.nextmove() == True and step < limit):
+	while (step < limit):
+		plastic.nextmove()
 		step += 1
-		count = plastic.countletters()
-		#print(f"After step {step}: {plastic.template}")
-	print(count)
+	plastic.countallletters()
 
 	limit = 40
-	while (plastic.nextmove() == True and step < limit):
+	while (step < limit):
+		plastic.nextmove()
 		step += 1
-		
-		#print(f"After step {step}: {plastic.template}")
-		print(f"{step} of {limit}")
-	count = plastic.countletters()
+	
+	plastic.countallletters()
+
 
 if __name__ == "__main__":
 	main()
