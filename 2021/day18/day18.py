@@ -22,8 +22,6 @@ class potatofish:
 			
 			cp = self.new_left[x]
 			cpe = self.new_left[x - 1]
-			#print(x)
-			#print(f"cp:{cp}\tcpe:{cpe}")
 
 			if cp.isnumeric() == True:
 				if cpe.isnumeric() == False:
@@ -32,13 +30,12 @@ class potatofish:
 					return int(cpe + cp), x - 1, True
 		return None, None, False
 	
+
 	def next_right(self, end: int) -> int:
 
 		for x in range(end, len(self.new_right)-1):
 			cp = self.new_right[x]
 			cpe = self.new_right[x + 1]
-			#print(x)
-			#print(f"cp:{cp}\tcpe:{cpe}")
 
 			if cp.isnumeric() == True:
 				if cpe.isnumeric() == False:
@@ -47,6 +44,7 @@ class potatofish:
 					return int(cp + cpe), x, True
 		return None, None, False
 	
+
 	# replace an existing entry via pointer
 	def replace_entry(self, before, after: int, value: str, target: str) -> None:
 
@@ -58,28 +56,18 @@ class potatofish:
 			self.new_left = new_data
 
 		elif target == "right":
-			#if before == 0:
-			#	new_data = "[" + value + self.new_right[after:]
-			#else:
 			new_data = self.new_right[:before] + value + self.new_right[after:]
 			self.new_right = new_data
-
-		#print(f"{self.data[:before+1]} + {value} + {self.data[after:]}")
-		#self.data = new_data
 
 	
 	def explode(self, start, end: int) -> None:
 		data = self.data[start:end]
-		print(f"explode data:{data}\t{start} {end}")
 
 		left = int((data.split(",")[0])[1:])
 		right = int((data.split(",")[1])[:-1])
-		print(f"left:{left} right:{right}")
-
 
 		self.new_left = self.data[:start]
 		self.new_right = self.data[end:]
-		print(f"\t{self.new_left}\t{self.new_right}")
 
 		next_left, lp, lpe = self.next_left(start)
 		next_right, rp, rpe = self.next_right(0)
@@ -88,23 +76,16 @@ class potatofish:
 		if next_left == None:
 			left = 0
 		else:
-
 			left = left + next_left
-			print(f"DIAGNOSTIC\t{lp-1},{lp+1}..{self.new_left[lp-1]} {self.new_left[lp]} {self.new_left[lp+1]}")
-
 			if lpe == True:
 				self.replace_entry(lp-1, lp+2, str(left), "left")
 			else:
 				self.replace_entry(lp-1, lp+1, str(left), "left")
 
-
 		if next_right == None:
-			print("next_right = None")
 			right = 0
 		else:
-
 			right = right + next_right
-			print(f"DIAGNOSTIC\t{rp-1},{rp},{rp+1}..{self.new_right[rp-1]} {self.new_right[rp]} {self.new_right[rp+1]} end:{end} right:{right} rpe:{rpe}")
 			if rpe == True:
 				self.replace_entry(rp, rp+2, str(right), "right")
 			else:
@@ -112,15 +93,10 @@ class potatofish:
 
 
 		new_data = self.new_left + "0" + self.new_right
-		print(f"{self.new_left} + 0 + {self.new_right}")
 		self.data = new_data
-		print(f"{self.data}\n")
-	
 	
 	
 	def find_pairs(self) -> str:
-
-		# ignore 14,3 or 3,13 etc
 
 		pairs = []
 		for x in range(0, len(self.data)-2):
@@ -148,8 +124,8 @@ class potatofish:
 				new_str = q + w + e
 				pos = tuple((lpos, rpos))
 				pairs.append(tuple((new_str, pos)))
-				print(f"found pair {new_str} @ {pos}")
 		return pairs
+
 
 	def count_depth(self, depth) -> int:
 
@@ -159,7 +135,6 @@ class potatofish:
 				lc += 1
 			elif x == "]":
 				rc += 1
-		print(f"checking depth to {self.data[:depth+1]} {int(abs(lc - rc))}")
 		return int(abs(lc - rc))
 	
 	def do_explosions(self) -> bool:
@@ -170,7 +145,6 @@ class potatofish:
 		while exploded_finished == False:
 
 			pairs = self.find_pairs()
-
 			for q in pairs:
 				
 				val = q[0]
@@ -185,17 +159,15 @@ class potatofish:
 			exploded_finished = True
 		return explosions
 	
+
 	def split(self, start, end: int) -> None:
 
 		data = int(self.data[start:end])
-		print(f"split data:{data}\t{end}")
 		left = math.floor(data / 2)
 		right = math.ceil(data / 2)
-
-		print(f"{self.data[:start]} + \"[\" + {str(left)} + \",\" + {str(right)} + \"]\" + {self.data[end:]}")
 		self.data = self.data[:start] + "[" + str(left) + "," + str(right) + "]" + self.data[end:]
-		print(f"{self.data}\n")
 	
+
 	def find_splitable_numbers(self) -> None:
 
 		numbers = []
@@ -206,7 +178,6 @@ class potatofish:
 			if q.isnumeric() == True and w.isnumeric() == True:
 				val = int(q + w)
 				pos = tuple((x, x + 2))
-				#print(f"\tfound splittable number {val} {pos}")
 				numbers.append(tuple((val, pos)))
 		return numbers
 	
@@ -215,11 +186,9 @@ class potatofish:
 		numbers = self.find_splitable_numbers()
 		if len(numbers) > 0:
 			
-			#print(numbers)
 			number = int(numbers[0][0])
 			lp = numbers[0][1][0]
 			rp = numbers[0][1][1]
-			#print(f"{lp} {rp}")
 			self.split(lp, rp)
 
 			return True
@@ -242,8 +211,6 @@ class pairo:
 	
 		self.mid = self.find_mid()
 		self.left, self.right = self.data[1:self.mid], self.data[self.mid+1:-1]
-
-		print(f"{self.left} {self.right}")
 
 		if self.left.isnumeric() == True:
 			self.final_left = int(self.left)
@@ -271,22 +238,45 @@ class pairo:
 		
 			point += 1
 
+
 def main():
 	
 	input = open(str(sys.argv[1]), "r").read()
 	data = [x for x in input.rstrip().split("\n")]
 
+	# part one
 	potato = potatofish()
-
 	for q in data:
-		print(f"{potato.data} + {q}")
 		potato.add(q)
-		print(f"{potato.data}")
 		potato.needful()
-		print(f"\n\nCUNT OATHE\n{potato.data}\n\n")
-	
 	das_list = pairo(potato.data)
 	print(das_list.solution)
+
+
+	# part two
+	largest = 0
+	data_len = len(data)
+	for x in range(0, data_len-1):
+		for y in range(1, data_len):
+
+			xy = "[" + data[x] + "," + data[y] + "]"
+			potato = potatofish()
+			potato.add(xy)
+			potato.needful()
+			xyv = pairo(potato.data).solution
+
+			if xyv > largest:
+				largest = xyv
+
+			yx = "[" + data[y] + "," + data[x] + "]"
+			potato = potatofish()
+			potato.add(yx)
+			potato.needful()
+			yxv = pairo(potato.data).solution
+
+			if yxv > largest:
+				largest = yxv
+	print(largest)
 
 
 if __name__ == "__main__":
