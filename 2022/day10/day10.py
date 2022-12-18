@@ -27,7 +27,7 @@ class cpu:
 
     def inccycles(self, amount: int) -> None:
         for _ in range(0, amount):
-            # day 2
+            # day 2 logic
             layer = math.trunc(self.cycles / 40)
             offset = self.cycles - (layer * 40)
             
@@ -37,7 +37,7 @@ class cpu:
                 self.tube += "."
             self.cycles += 1
 
-            # day 1
+            # day 1 logic
             if self.cycles <= 220:
                 if self.cycles == 20 or (self.cycles-20) % 40 == 0:
                     self.signallist.append(self.x * self.cycles)
