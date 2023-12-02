@@ -3,7 +3,6 @@ import sys
 class game:
     def __init__(self, id: int):
         self.id = id
-        #self.set = []
         self.max_rgb = [0,0,0]
 
 
